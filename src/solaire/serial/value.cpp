@@ -233,75 +233,134 @@ namespace solaire { namespace serial {
 	}
 
 	bool value::is_char() const throw() {
-		return false;
+		return mType == CHAR_T || (mType == STRING_T && static_cast<const std::string*>(mPointer)->size() == 1);
 	}
 
 	bool value::is_bool() const throw() {
-		return false;
+		return false; //! \todo implement
 	}
 
 	bool value::is_unsigned() const throw() {
-		return false;
+		return false; //! \todo implement
 	}
 
 	bool value::is_signed() const throw() {
-		return false;
+		return false; //! \todo implement
 	}
 
 	bool value::is_float() const throw() {
-		return false;
+		return false; //! \todo implement
 	}
 
 	bool value::is_pointer() const throw() {
-		return false;
+		return false; //! \todo implement
 	}
 
 	bool value::is_string() const throw() {
-		return false;
+		return false; //! \todo implement
 	}
 
 	bool value::is_array() const throw() {
-		return false;
+		return false; //! \todo implement
 	}
 
 	bool value::is_object() const throw() {
-		return false;
+		return false; //! \todo implement
 	}
 
 	char value::get_char() const {
+		switch(mType)
+		{
+		case CHAR_T:
+			return mChar;
+		case STRING_T:
+			{
+				const std::string& ref = *static_cast<const std::string*>(mPointer);
+				if(ref.size() == 1) return ref[0];
+			}
+			break;
+		}
 		throw std::runtime_error("solaire::serial::value::get_char : Value is not convertable to char");
 	}
 
 	bool value::get_bool() const {
-		throw std::runtime_error("solaire::serial::value::get_bool : Value is not convertable to bool");
+		switch(mType)
+		{
+		case CHAR_T:
+			switch(mChar)
+			{
+			case '0':
+			case 'n':
+			case 'N':
+				return false;
+			case '1':
+			case 'y':
+			case 'Y':
+				return true;
+			}
+		case UNSIGNED_T:
+			return mUnsigned >= 1;
+		case SIGNED_T:
+			return mSigned >= 1;
+		case FLOAT_T:
+			return mFloat >= 1.f;
+		case POINTER_T:
+			return mPointer != nullptr;
+		case STRING_T:
+			{
+				{
+					const std::string& ref = *static_cast<const std::string*>(mPointer);
+					if(ref == "0") return false;
+					else if (ref == "n") return false;
+					else if (ref == "N") return false;
+					else if (ref == "no") return false;
+					else if (ref == "NO") return false;
+					else if (ref == "No") return false;
+					else if (ref == "false") return false;
+					else if (ref == "FALSE") return false;
+					else if (ref == "False") return false;
+					else if (ref == "1") return true;
+					else if (ref == "y") return true;
+					else if (ref == "Y") return true;
+					else if (ref == "yes") return true;
+					else if (ref == "YES") return true;
+					else if (ref == "Yes") return true;
+					else if (ref == "true") return true;
+					else if (ref == "TRUE") return true;
+					else if (ref == "True") return true;
+				}
+			}
+			break;
+		}
+		throw std::runtime_error("solaire::serial::value::get_bool : Value is not convertable to bool"); //! \todo implement
 	}
 
 	uint64_t value::get_unsigned() const {
-		throw std::runtime_error("solaire::serial::value::get_unsigned : Value is not convertable to unsigned");
+		throw std::runtime_error("solaire::serial::value::get_unsigned : Value is not convertable to unsigned"); //! \todo implement
 	}
 
 	int64_t value::get_signed() const {
-		throw std::runtime_error("solaire::serial::value::get_signed : Value is not convertable to signed");
+		throw std::runtime_error("solaire::serial::value::get_signed : Value is not convertable to signed"); //! \todo implement
 	}
 
 	double value::get_float() const {
-		throw std::runtime_error("solaire::serial::value::get_float : Value is not convertable to float");
+		throw std::runtime_error("solaire::serial::value::get_float : Value is not convertable to float"); //! \todo implement
 	}
 
 	void* value::get_pointer() const {
-		throw std::runtime_error("solaire::serial::value::get_pointer : Value is not convertable to pointer");
+		throw std::runtime_error("solaire::serial::value::get_pointer : Value is not convertable to pointer"); //! \todo implement
 	}
 
 	std::string value::get_string() const {
-		throw std::runtime_error("solaire::serial::value::get_string : Value is not convertable to string");
+		throw std::runtime_error("solaire::serial::value::get_string : Value is not convertable to string"); //! \todo implement
 	}
 
 	std::vector<value> value::get_array() const {
-		throw std::runtime_error("solaire::serial::value::get_array : Value is not convertable to array");
+		throw std::runtime_error("solaire::serial::value::get_array : Value is not convertable to array"); //! \todo implement
 	}
 
 	std::map<std::string, value> value::get_object() const {
-		throw std::runtime_error("solaire::serial::value::get_object : Value is not convertable to object");
+		throw std::runtime_error("solaire::serial::value::get_object : Value is not convertable to object"); //! \todo implement
 	}
 
 	char& value::get_char() {
