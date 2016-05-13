@@ -15,19 +15,6 @@
 #include "solaire/core/interfaces/allocator.hpp"
 #include "solaire/serial/value.hpp"
 
-enum {
-	VOID_T,
-	CHAR_T,
-	BOOL_T,
-	UNSIGNED_T,
-	SIGNED_T,
-	FLOAT_T,
-	POINTER_T,
-	STRING_T,
-	ARRAY_T,
-	OBJECT_T
-};
-
 namespace solaire { namespace serial {
 	// value
 	value::value() :
@@ -226,6 +213,10 @@ namespace solaire { namespace serial {
 			break;
 		}
 		return *this;
+	}
+
+	serial_type value::get_type() const throw() {
+		return mType;
 	}
 
 	bool value::is_void() const throw() {

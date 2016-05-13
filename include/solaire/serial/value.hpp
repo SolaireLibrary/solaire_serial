@@ -22,6 +22,19 @@
 //! \todo Use exportable classes instead of STL
 
 namespace solaire { namespace serial {
+	enum serial_type : uint8_t {
+		VOID_T,
+		CHAR_T,
+		BOOL_T,
+		UNSIGNED_T,
+		SIGNED_T,
+		FLOAT_T,
+		POINTER_T,
+		STRING_T,
+		ARRAY_T,
+		OBJECT_T
+	};
+
 	class value {
 	protected:
 		union {
@@ -32,7 +45,7 @@ namespace solaire { namespace serial {
 			double mFloat;
 			void* mPointer;
 		};
-		uint8_t mType;
+		serial_type mType;
 	public:
 		value();
 		value(value&&);
@@ -56,6 +69,8 @@ namespace solaire { namespace serial {
 
 		value& operator=(value&&);
 		value& operator=(const value&);
+
+		serial_type get_type() const throw();
 
 		bool is_void() const throw();
 		bool is_char() const throw();
