@@ -38,6 +38,11 @@ namespace solaire { namespace serial {
 	inline typename serialiser<T>::output_t deserialise(const value& aValue) {
 		return serialiser<T>::deserialise(aValue);
 	}
+
+	template<class A, class B>
+	inline typename serialiser<A>::output_t serial_cast(typename serialiser<B>::input_t aValue) {
+		return serialiser<A>::deserialise(serialiser<B>::serialise(aValue))
+	}
 }}
 
 #endif
