@@ -16,8 +16,8 @@
 //limitations under the License.
 
 #include <map>
-#include <vector>
 #include "solaire/serial/serial.hpp"
+#include "solaire/core/containers/array_list.hpp"
 
 //! \todo Use exportable classes instead of STL
 
@@ -63,7 +63,7 @@ namespace solaire { namespace serial {
 		value(float);
 		value(double);
 		value(const std::string&);
-		value(const std::vector<value>&);
+		value(const container<value>&);
 		value(const std::map<std::string, value>&);
 		~value();
 
@@ -90,7 +90,7 @@ namespace solaire { namespace serial {
 		double get_float() const;
 		void* get_pointer() const;
 		std::string get_string() const;
-		std::vector<value> get_array() const;
+		array_list<value> get_array() const;
 		std::map<std::string, value> get_object() const;
 
 		char& get_char();
@@ -100,7 +100,7 @@ namespace solaire { namespace serial {
 		double& get_float();
 		void*& get_pointer();
 		std::string& get_string();
-		std::vector<value>& get_array();
+		stack<value>& get_array();
 		std::map<std::string, value>& get_object();
 
 		void set_void();
@@ -111,7 +111,7 @@ namespace solaire { namespace serial {
 		void set_float(double);
 		void set_pointer(void*);
 		void set_string(const std::string&);
-		void set_array(const std::vector<value>&);
+		void set_array(const container<value>&);
 		void set_object(const std::map<std::string, value>&);
 	};
 }}

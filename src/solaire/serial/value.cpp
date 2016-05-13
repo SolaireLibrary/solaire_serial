@@ -127,7 +127,7 @@ namespace solaire { namespace serial {
 		set_string(aValue);
 	}
 
-	value::value(const std::vector<value>& aValue) :
+	value::value(const container<value>& aValue) :
 		mPointer(nullptr),
 		mType(VOID_T)
 	{
@@ -204,7 +204,7 @@ namespace solaire { namespace serial {
 			set_string(*static_cast<const std::string*>(aOther.mPointer));
 			break;
 		case ARRAY_T:
-			set_array(*static_cast<const std::vector<value>*>(aOther.mPointer));
+			set_array(*static_cast<const container<value>*>(aOther.mPointer));
 			break;
 		case OBJECT_T:
 			set_object(*static_cast<const std::map<std::string, value>*>(aOther.mPointer));
@@ -346,7 +346,7 @@ namespace solaire { namespace serial {
 		throw std::runtime_error("solaire::serial::value::get_string : Value is not convertable to string"); //! \todo implement
 	}
 
-	std::vector<value> value::get_array() const {
+	array_list<value> value::get_array() const {
 		throw std::runtime_error("solaire::serial::value::get_array : Value is not convertable to array"); //! \todo implement
 	}
 
@@ -389,9 +389,9 @@ namespace solaire { namespace serial {
 		return *static_cast<std::string*>(mPointer);
 	}
 
-	std::vector<value>& value::get_array() {
+	stack<value>& value::get_array() {
 		if (mType != ARRAY_T) operator=(std::move(value(const_cast<const value*>(this)->get_array())));
-		return *static_cast<std::vector<value>*>(mPointer);
+		return *static_cast<stack<value>*>(mPointer);
 	}
 
 	std::map<std::string, value>& value::get_object() {
@@ -411,8 +411,8 @@ namespace solaire { namespace serial {
 			break;
 		case ARRAY_T:
 			{
-				std::vector<value>* const tmp = static_cast<std::vector<value>*>(mPointer);
-				tmp->~vector();
+				array_list<value>* const tmp = static_cast<array_list<value>*>(mPointer);
+				tmp->~array_list();
 				get_allocator().deallocate(tmp);
 			}
 			break;
@@ -476,12 +476,12 @@ namespace solaire { namespace serial {
 		}
 	}
 
-	void value::set_array(const std::vector<value>& aValue) {
+	void value::set_array(const container<value>& aValue) {
 		if(mType == ARRAY_T) {
-			*static_cast<std::vector<value>*>(mPointer) = aValue;
+			*static_cast<container<value>*>(mPointer) = aValue;
 		}else {
 			set_void();
-			mPointer = new(get_allocator().allocate(sizeof(std::vector<value>))) std::vector<value>(aValue);
+			mPointer = new(get_allocator().allocate(sizeof(array_list<value>))) array_list<value>(aValue);
 			mType = ARRAY_T;
 		}
 	}
