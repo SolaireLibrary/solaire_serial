@@ -18,6 +18,7 @@
 #include <map>
 #include "solaire/serial/serial.hpp"
 #include "solaire/core/containers/array_list.hpp"
+#include "solaire/core/containers/string.hpp"
 
 //! \todo Use exportable classes instead of STL
 
@@ -62,9 +63,9 @@ namespace solaire { namespace serial {
 		value(int64_t);
 		value(float);
 		value(double);
-		value(const std::string&);
+		value(const c_string&);
 		value(const container<value>&);
-		value(const std::map<std::string, value>&);
+		value(const std::map<c_string, value>&);
 		~value();
 
 		value& operator=(value&&);
@@ -89,9 +90,9 @@ namespace solaire { namespace serial {
 		int64_t get_signed() const;
 		double get_float() const;
 		void* get_pointer() const;
-		std::string get_string() const;
-		array_list<value> get_array() const;
-		std::map<std::string, value> get_object() const;
+		c_string get_string() const;
+		const container<value>& get_array() const;
+		const std::map<c_string, value>& get_object() const;
 
 		char& get_char();
 		bool& get_bool();
@@ -99,9 +100,9 @@ namespace solaire { namespace serial {
 		int64_t& get_signed();
 		double& get_float();
 		void*& get_pointer();
-		std::string& get_string();
+		c_string& get_string();
 		stack<value>& get_array();
-		std::map<std::string, value>& get_object();
+		std::map<c_string, value>& get_object();
 
 		void set_void();
 		void set_char(char);
@@ -110,9 +111,9 @@ namespace solaire { namespace serial {
 		void set_signed(int64_t);
 		void set_float(double);
 		void set_pointer(void*);
-		void set_string(const std::string&);
+		void set_string(const c_string&);
 		void set_array(const container<value>&);
-		void set_object(const std::map<std::string, value>&);
+		void set_object(const std::map<c_string, value>&);
 	};
 }}
 

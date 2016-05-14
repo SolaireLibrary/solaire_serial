@@ -120,7 +120,7 @@ namespace solaire { namespace serial {
 		set_float(aValue);
 	}
 
-	value::value(const std::string& aValue) :
+	value::value(const c_string& aValue) :
 		mPointer(nullptr),
 		mType(VOID_T)
 	{
@@ -134,7 +134,7 @@ namespace solaire { namespace serial {
 		set_array(aValue);
 	}
 
-	value::value(const std::map<std::string, value>& aValue) :
+	value::value(const std::map<c_string, value>& aValue) :
 		mPointer(nullptr),
 		mType(VOID_T)
 	{
@@ -201,13 +201,13 @@ namespace solaire { namespace serial {
 			set_pointer(aOther.mPointer);
 			break;
 		case STRING_T:
-			set_string(*static_cast<const std::string*>(aOther.mPointer));
+			set_string(*static_cast<const c_string*>(aOther.mPointer));
 			break;
 		case ARRAY_T:
 			set_array(*static_cast<const container<value>*>(aOther.mPointer));
 			break;
 		case OBJECT_T:
-			set_object(*static_cast<const std::map<std::string, value>*>(aOther.mPointer));
+			set_object(*static_cast<const std::map<c_string, value>*>(aOther.mPointer));
 			break;
 		default:
 			break;
@@ -224,7 +224,7 @@ namespace solaire { namespace serial {
 	}
 
 	bool value::is_char() const throw() {
-		return mType == CHAR_T || (mType == STRING_T && static_cast<const std::string*>(mPointer)->size() == 1);
+		return mType == CHAR_T || (mType == STRING_T && static_cast<const c_string*>(mPointer)->size() == 1);
 	}
 
 	bool value::is_bool() const throw() {
@@ -266,7 +266,7 @@ namespace solaire { namespace serial {
 			return mChar;
 		case STRING_T:
 			{
-				const std::string& ref = *static_cast<const std::string*>(mPointer);
+				const c_string& ref = *static_cast<const c_string*>(mPointer);
 				if(ref.size() == 1) return ref[0];
 			}
 			break;
@@ -300,7 +300,7 @@ namespace solaire { namespace serial {
 		case STRING_T:
 			{
 				{
-					const std::string& ref = *static_cast<const std::string*>(mPointer);
+					const c_string& ref = *static_cast<const c_string*>(mPointer);
 					if(ref == "0") return false;
 					else if (ref == "n") return false;
 					else if (ref == "N") return false;
@@ -342,15 +342,15 @@ namespace solaire { namespace serial {
 		throw std::runtime_error("solaire::serial::value::get_pointer : Value is not convertable to pointer"); //! \todo implement
 	}
 
-	std::string value::get_string() const {
+	c_string value::get_string() const {
 		throw std::runtime_error("solaire::serial::value::get_string : Value is not convertable to string"); //! \todo implement
 	}
 
-	array_list<value> value::get_array() const {
+	const container<value>& value::get_array() const {
 		throw std::runtime_error("solaire::serial::value::get_array : Value is not convertable to array"); //! \todo implement
 	}
 
-	std::map<std::string, value> value::get_object() const {
+	const std::map<c_string, value>& value::get_object() const {
 		throw std::runtime_error("solaire::serial::value::get_object : Value is not convertable to object"); //! \todo implement
 	}
 
@@ -384,9 +384,9 @@ namespace solaire { namespace serial {
 		return mPointer;
 	}
 
-	std::string& value::get_string() {
+	c_string& value::get_string() {
 		if (mType != STRING_T) operator=(std::move(value(const_cast<const value*>(this)->get_string())));
-		return *static_cast<std::string*>(mPointer);
+		return *static_cast<c_string*>(mPointer);
 	}
 
 	stack<value>& value::get_array() {
@@ -394,9 +394,9 @@ namespace solaire { namespace serial {
 		return *static_cast<stack<value>*>(mPointer);
 	}
 
-	std::map<std::string, value>& value::get_object() {
+	std::map<c_string, value>& value::get_object() {
 		if (mType != OBJECT_T) operator=(std::move(value(const_cast<const value*>(this)->get_object())));
-		return *static_cast<std::map<std::string, value>*>(mPointer);
+		return *static_cast<std::map<c_string, value>*>(mPointer);
 	}
 
 	void value::set_void() {
@@ -404,8 +404,8 @@ namespace solaire { namespace serial {
 		{
 		case STRING_T:
 			{
-				std::string* const tmp = static_cast<std::string*>(mPointer);
-				tmp->~basic_string();
+				c_string* const tmp = static_cast<c_string*>(mPointer);
+				tmp->~string();
 				get_allocator().deallocate(tmp);
 			}
 			break;
@@ -418,7 +418,7 @@ namespace solaire { namespace serial {
 			break;
 		case OBJECT_T:
 			{
-				std::map<std::string, value>* const tmp = static_cast<std::map<std::string, value>*>(mPointer);
+				std::map<c_string, value>* const tmp = static_cast<std::map<c_string, value>*>(mPointer);
 				tmp->~map();
 				get_allocator().deallocate(tmp);
 			}
@@ -466,12 +466,12 @@ namespace solaire { namespace serial {
 		mType = POINTER_T;
 	}
 
-	void value::set_string(const std::string& aValue) {
+	void value::set_string(const c_string& aValue) {
 		if(mType == STRING_T) {
-			*static_cast<std::string*>(mPointer) = aValue;
+			*static_cast<c_string*>(mPointer) = aValue;
 		}else {
 			set_void();
-			mPointer = new(get_allocator().allocate(sizeof(std::string))) std::string(aValue);
+			mPointer = new(get_allocator().allocate(sizeof(c_string))) c_string(aValue);
 			mType = STRING_T;
 		}
 	}
@@ -486,12 +486,12 @@ namespace solaire { namespace serial {
 		}
 	}
 
-	void value::set_object(const std::map<std::string, value>& aValue) {
+	void value::set_object(const std::map<c_string, value>& aValue) {
 		if(mType == OBJECT_T) {
-			*static_cast<std::map<std::string, value>*>(mPointer) = aValue;
+			*static_cast<std::map<c_string, value>*>(mPointer) = aValue;
 		}else {
 			set_void();
-			mPointer = new(get_allocator().allocate(sizeof(std::map<std::string, value>))) std::map<std::string, value>(aValue);
+			mPointer = new(get_allocator().allocate(sizeof(std::map<c_string, value>))) std::map<c_string, value>(aValue);
 			mType = OBJECT_T;
 		}
 	}
