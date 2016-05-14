@@ -30,7 +30,7 @@ namespace solaire { namespace serial {
 	}
 
 	void write_delimited(const value& aValue, interfaces::ostream& aStream, char aDelimiter) {
-		runtime_assert(solaire_write_delimited((&aValue, &aStream, aDelimiter), "solaire::serial::write_delimited : Failed to write delimited");
+		runtime_assert(solaire_write_delimited(&aValue, &aStream, aDelimiter),"solaire::serial::write_delimited : Failed to write delimited");
 	}
 }}
 
